@@ -26,7 +26,6 @@ def order(request):
 def order_confirm(request):
     if request.method == 'POST':
         data = {
-            'pcd_cpay_ver': request.POST.get('pcd_cpay_ver'),  # 결제창 버전 (Default : 1.0.1)
             'is_direct': request.POST.get('is_direct'),  # 결제창 방식 (DIRECT: Y | POPUP: N)
             'pay_type': request.POST.get('pay_type'),  # 결제수단
             'work_type': request.POST.get('work_type'),  # 결제요청방식
