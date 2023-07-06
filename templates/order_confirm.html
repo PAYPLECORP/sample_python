@@ -93,12 +93,11 @@
                  */
                 obj.PCD_PAY_TYPE = pay_type;			                    // (필수) 결제 방법 (transfer | card)
                 obj.PCD_PAY_WORK = pay_work;			                    // (필수) 결제요청 업무구분 (AUTH : 본인인증+계좌등록, CERT: 본인인증+계좌등록+결제요청등록(최종 결제승인요청 필요), PAY: 본인인증+계좌등록+결제완료)
-                obj.PCD_CARD_VER = card_ver || '01';			            // DEFAULT: 01 (01: 정기결제 플렛폼, 02: 일반결제 플렛폼), 카드결제 시 필수
+                if (pay_type === 'card') obj.PCD_CARD_VER = card_ver || '01';			            // DEFAULT: 01 (01: 정기결제 플렛폼, 02: 일반결제 플렛폼), 카드결제 시 필수
                 obj.PCD_PAYER_AUTHTYPE = auth_type;							// (선택) [간편결제/정기결제] 본인인증 방식 (sms : 문자인증 | pwd : 패스워드 인증)
 
                 // IOS, AOS앱 및 인앱브라우저에서는 결제창 호출 방식을 다이렉트로 연결하시기 바랍니다.
                 // direct(절대경로): https://payple.kr/sample/pay.html | popup(상대경로) https:// 로 시작하지 않고, 중간경로( /sample/pay.html)를 표기한 URL
-                // ref: http://docs.payple.kr/faq/pay/callback
                 // (필수) 결제(요청)결과 RETURN URL
                 if (is_direct === 'Y' ? obj.PCD_RST_URL = '{{hostname}}' + '/result' : obj.PCD_RST_URL = '/result') ;
 
@@ -156,7 +155,10 @@
                         obj.PCD_TAXSAVE_FLAG = is_taxsave;					// (선택) 현금영수증 발행 여부 (Y|N)
                     }
                 }
-                console.log('obj: ', obj);
+
+                obj.clientKey = '{{ client_key }}';			        		// (선택) 현금영수증 발행 여부 (Y|N)
+
+                PaypleCpayAuthCheck(obj);
 
                 // 가맹점 인증
                 axios.post('/auth', {}, {
@@ -174,7 +176,6 @@
 
                     // PaypleCpayPopup()을 호출하려면 cpay.payple.kr 스크립트 추가가 선행 되어야 합니다.
                     // obj객체에 토큰값을 포함 후 결제창 호출
-                    PaypleCpayPopup(obj);
                 }).catch(err => {
                     console.error(err);
                     alert(err);

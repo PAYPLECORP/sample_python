@@ -26,6 +26,7 @@ def order(request):
 def order_confirm(request):
     if request.method == 'POST':
         data = {
+            'client_key': os.environ.get('CLIENT_KEY'),  # 파트너 인증 - 클라이언트 키(clientKey)
             'is_direct': request.POST.get('is_direct'),  # 결제창 방식 (DIRECT: Y | POPUP: N)
             'pay_type': request.POST.get('pay_type'),  # 결제수단
             'work_type': request.POST.get('work_type'),  # 결제요청방식
@@ -54,7 +55,6 @@ def order_confirm(request):
 
 # POST /auth, 가맹점 인증
 # 케이스별로 가맹점 인증 요청에 사용하는 요청변수가 다르니, Payple에서 제공하는 가이드를 통해 요청변수를 확인하시길 바랍니다.
-# ref: http://docs.payple.kr/card/install/auth
 def authenticate(request):
     if request.method == 'POST':
         auth_url = os.environ.get('AUTH_URL')  # 가맹점 인증 URL
@@ -128,8 +128,6 @@ def order_result(request):
 
 
 # POST /payconfirm, 결제요청 재컨펌 (PCD_PAY_WORK : CERT)
-# ref (bank): http://docs.payple.kr/bank/pay/regular
-# ref (card): http://docs.payple.kr/card/pay/regular
 def pay_confirm(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -153,8 +151,6 @@ def pay_confirm(request):
 
 
 # POST /refund, 환불(승인취소)
-# ref (bank): http://docs.payple.kr/bank/pay/cancel
-# ref (card): http://docs.payple.kr/card/pay/cancel
 def pay_refund(request):
     if request.method == 'POST':
         auth_url = os.environ.get('AUTH_URL')  # 가맹점 인증 URL
