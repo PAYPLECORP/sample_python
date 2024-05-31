@@ -53,8 +53,10 @@
     </table>
 {% endblock %}
 {% block script %}
-    <script src="https://democpay.payple.kr/js/cpay.payple.1.0.1.js"></script> <!-- TEST(테스트) -->
-    <!-- <script src="https://cpay.payple.kr/js/cpay.payple.1.0.1.js"></script> --> <!-- REAL(운영) -->
+
+    <!-- 서버별 페이플 국내결제 스크립트 추가 -->
+    <script src="https://democpay.payple.kr/js/v1/payment.js"></script> <!-- 테스트(TEST) -->
+    <!-- <script src="https://cpay.payple.kr/js/v1/payment.js"></script> --> <!-- 운영(REAL) -->
 
 
     <script>
@@ -101,9 +103,7 @@
                 // (필수) 결제(요청)결과 RETURN URL
                 if (is_direct === 'Y' ? obj.PCD_RST_URL = '{{hostname}}' + '/result' : obj.PCD_RST_URL = '/result') ;
 
-                //obj.payple_auth_file = '/auth';	                        // (선택) /절대경로/payple_auth_file (node.js => [app.js] app.post('/auth', ...) {..}
                 //obj.callbackFunction = getResult;						    // (선택) 결과를 받고자 하는 callback 함수명 (callback함수를 설정할 경우 PCD_RST_URL 이 작동하지 않음)
-
                 /*
                  *  빌링키 등록 (pay_work === 'AUTH')
                  */
@@ -156,30 +156,9 @@
                     }
                 }
 
-                obj.clientKey = '{{ client_key }}';			        		// (선택) 현금영수증 발행 여부 (Y|N)
+                obj.clientKey = '{{ client_key }}';			        		// 결제창 호출 클라이언트키
 
                 PaypleCpayAuthCheck(obj);
-
-                // 가맹점 인증
-                axios.post('/auth', {}, {
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                }).then(res => {
-                    // 가맹점 인증 후 리턴받은 토큰값 세팅
-                    obj.PCD_CST_ID = res.data.cst_id;         // 가맹점 인증 후 리턴 받은 cst_id Token
-                    obj.PCD_CUST_KEY = res.data.custKey;      // 가맹점 인증 후 리턴 받은 custKey Token
-                    obj.PCD_AUTH_KEY = res.data.AuthKey;      // 가맹점 인증 후 리턴 받은 AuthKey Token
-                    obj.PCD_PAY_URL = res.data.return_url;    // 가맹점 인증 후 리턴 받은 결제요청 URL
-
-                    if (res.data.result !== 'success') return alert(res.data.result_msg);
-
-                    // PaypleCpayPopup()을 호출하려면 cpay.payple.kr 스크립트 추가가 선행 되어야 합니다.
-                    // obj객체에 토큰값을 포함 후 결제창 호출
-                }).catch(err => {
-                    console.error(err);
-                    alert(err);
-                });
             });
         });
     </script>
