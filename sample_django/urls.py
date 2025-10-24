@@ -22,7 +22,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('', sample_django.views.order),
     path('order_confirm', sample_django.views.order_confirm, name='order_confirm'),
-    path('result', sample_django.views.order_result, name='order_result'),
+    path('order_result', sample_django.views.order_result, name='order_result'),
     path('pay_confirm', sample_django.views.pay_confirm, name='pay_confirm'),
     path('pay_refund', sample_django.views.pay_refund, name='pay_refund'),
     path('auth', sample_django.views.authenticate, name='auth'),
